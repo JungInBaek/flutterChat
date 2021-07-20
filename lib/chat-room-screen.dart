@@ -25,6 +25,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   final String name;
 
   TextEditingController _controller = TextEditingController();
+  GlobalKey<AnimatedListState> _animListKey = GlobalKey<AnimatedListState>();
 
   @override
   Widget build(BuildContext context) {
@@ -53,15 +54,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               List<ChatMessageWidget> _messages = [];
 
               snapshot.data!.docs.map((document) {
-                _messages.insert(0, ChatMessageWidget(messageModel: MessageModel(rid, document['uid'], name, document['txt'], DateTime.now().millisecondsSinceEpoch), uid: uid,));
+                _messages.insert(0, ChatMessageWidget(messageModel: MessageModel(rid, document['uid'], name, document['txt'], DateTime.now().millisecondsSinceEpoch), uid: uid));
               }).toList();
-
-              return AnimatedList(
-                reverse: true,
-                itemBuilder: (context, index, animation) {
-                  return _messages[index];
-                },
-              );
 
               return ListView(
                 reverse: true,
