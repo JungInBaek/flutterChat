@@ -15,10 +15,6 @@ class ChatListWidget extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () async {
-        // Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChangeNotifierProvider(
-        //   create: (context) => MessageProvider(uid, name, rid, rname),
-        //   child: ChatRoomScreen(),
-        // )));
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => ChatRoomScreen(rname: rname, rid: rid, uid: uid, name: name))

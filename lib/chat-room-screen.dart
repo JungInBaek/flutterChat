@@ -44,17 +44,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 );
               }
 
-              // return ListView(
-              //   reverse: true,
-              //   children: snapshot.data!.docs.map((document) {
-              //     return ChatMessageWidget(messageModel: MessageModel(rid, document['uid'], name, document['txt'], DateTime.now().millisecondsSinceEpoch), uid: uid,);
-              //   }).toList(),
-              // );
-
               List<ChatMessageWidget> _messages = [];
 
               snapshot.data!.docs.map((document) {
-                _messages.insert(0, ChatMessageWidget(messageModel: MessageModel(rid, document['uid'], name, document['txt'], DateTime.now().millisecondsSinceEpoch), uid: uid));
+                _messages.insert(0, ChatMessageWidget(messageModel: MessageModel(rid, document['uid'], document['name'], document['txt'], DateTime.now().millisecondsSinceEpoch), uid: uid));
               }).toList();
 
               return ListView(

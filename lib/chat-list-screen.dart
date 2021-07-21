@@ -22,7 +22,6 @@ class ChatListScreenState extends State<ChatListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButton: null,
         appBar: AppBar(
           title: Text('채팅 리스트'),
         ),
@@ -43,7 +42,7 @@ class ChatListScreenState extends State<ChatListScreen> {
               }).toList(),
             );
           },
-        )
+        ),
     );
   }
 }
