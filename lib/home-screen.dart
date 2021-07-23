@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,6 +34,18 @@ class _HomeScreenState extends State<HomeScreen> {
               if (!snapshot.hasData) {
                 return LoginScreen();
               } else {
+                FirebaseFirestore.instance.collection('users').doc(snapshot.data.uid).get().then((value) {
+                  if(!value.exists) {
+                    FirebaseFirestore.instance.collection('users').doc(snapshot.data.uid).set({'uid' : snapshot.data.uid, 'name' : snapshot.data.displayName});
+                  }
+                });
+
+                // FirebaseFirestore.instance.collection('friends').doc(snapshot.data.uid).get().then((value) {
+                //   if(!value.exists) {
+                //     FirebaseFirestore.instance.collection('friends').doc().set({'uid' : snapshot.data.uid, 'fid' : []});
+                // }});
+                print("${snapshot.data.displayName} (${snapshot.data.uid}) >>> [로그인]");
+
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -65,6 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       GestureDetector(
                         behavior: HitTestBehavior.translucent,
                         onTap: () async {
+                          print("${snapshot.data.displayName} (${snapshot.data.uid}) >>> [로그아웃]");
                           handleSignOut();
                         },
                         child: Container(

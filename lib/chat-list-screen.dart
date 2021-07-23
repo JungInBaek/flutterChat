@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterchat/chat-list-widget.dart';
+import 'package:flutterchat/create-room-screen.dart';
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({Key? key, required this.snapshot}) : super(key: key);
@@ -22,27 +23,36 @@ class ChatListScreenState extends State<ChatListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('채팅 리스트'),
-        ),
-        body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('room').where('uid', arrayContains: uid).snapshots(),
-          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if(!snapshot.hasData) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-
-            return ListView(
-              children: snapshot.data!.docs.map((document) {
-                return Center(
-                  child: ChatListWidget(uidList: document['uid'], uid: uid, name: name, rid: document.id, rname: document['rname'])
-                );
-              }).toList(),
+      appBar: AppBar(
+        title: Text('채팅 리스트'),
+      ),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('room').where('uid', arrayContains: uid).snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if(!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
             );
-          },
-        ),
+          }
+
+          return ListView(
+            children: snapshot.data!.docs.map((document) {
+              return ListTile(
+                title: ChatListWidget(uidList: document['uid'], uid: uid, name: name, rid: document.id, rname: document['rname']),
+              );
+            }).toList(),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CreateRoomScreen(uid: uid))
+          );
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }

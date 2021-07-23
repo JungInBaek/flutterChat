@@ -25,8 +25,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   final String name;
 
   TextEditingController _controller = TextEditingController();
-  GlobalKey<AnimatedListState> _animListKey = GlobalKey<AnimatedListState>();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
