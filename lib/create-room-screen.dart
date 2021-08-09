@@ -30,14 +30,14 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
             icon: Icon(Icons.check),
             onPressed: () {
               if(_saved.isNotEmpty) {
-                FirebaseFirestore.instance.collection('room').doc().set({'rname' : '채팅방', 'uid' : _saved.toList()});    // 결과 저장 가능하면 시도해볼 것
+                FirebaseFirestore.instance.collection('room').doc().set({'rname' : '채팅방', 'uid' : _saved.toList()});    // 나중에 다시 수정
                 print("방 생성 완료!");
               }
               Navigator.pop(
                 context
               );
               
-              // 화면 한번 더 이동시키기
+              // 채팅방 화면으로 한번 더 이동시키기 (나중에 다시 수정)
               // Navigator.push(
               //   context,
               //   MaterialPageRoute(builder: (context) => ChatRoomScreen(rname: '채팅방', rid: rid, uid: uid, name: name))
@@ -69,7 +69,6 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                     } else {
                       _saved.add(document['fid']);        //  false
                     }
-
                     print(_saved.toString());
                   });
                 },
