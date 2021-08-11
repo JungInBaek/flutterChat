@@ -5,8 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutterchat/chat-list-screen.dart';
+import 'package:flutterchat/dio_server.dart';
 import 'package:flutterchat/login-screen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:flutterchat/user.dart';
 
 import 'main.dart';
 
@@ -34,17 +38,25 @@ class _HomeScreenState extends State<HomeScreen> {
               if (!snapshot.hasData) {
                 return LoginScreen();
               } else {
-                FirebaseFirestore.instance.collection('users').doc(snapshot.data.uid).get().then((value) {
-                  if(!value.exists) {
-                    FirebaseFirestore.instance.collection('users').doc(snapshot.data.uid).set({'uid' : snapshot.data.uid, 'name' : snapshot.data.displayName});
+                FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(snapshot.data.uid)
+                    .get()
+                    .then((value) {
+                  if (!value.exists) {
+                    FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(snapshot.data.uid)
+                        .set({
+                      'uid': snapshot.data.uid,
+                      'name': snapshot.data.displayName
+                    });
                   }
                 });
-
-                // FirebaseFirestore.instance.collection('friends').doc(snapshot.data.uid).get().then((value) {
-                //   if(!value.exists) {
-                //     FirebaseFirestore.instance.collection('friends').doc().set({'uid' : snapshot.data.uid, 'fid' : []});
-                // }});
-                print("${snapshot.data.displayName} (${snapshot.data.uid}) >>> [로그인]");
+                print(
+                    "${snapshot.data.displayName} (${snapshot.data.uid}) >>> [로그인]");
+                server.postReq(snapshot.data.uid);
+                // FirebaseFirestore.instance.collection('login').doc().set({'uidList' : '채팅방', 'uid' : _saved.toList()});
 
                 return Center(
                   child: Column(
@@ -62,9 +74,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           //           child: ChatListScreen(snapshot: snapshot),
                           //         )));
                           Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ChatListScreen(snapshot: snapshot))
-                          );
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ChatListScreen(snapshot: snapshot)));
                         },
                         child: Container(
                             padding: EdgeInsets.all(13),
@@ -76,9 +89,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: TextStyle(fontSize: 25))),
                       ),
                       GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () async {},
+                          child: Container(
+                              padding: EdgeInsets.all(13),
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 2, color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(12)),
+                              child: Text("랜덤 매칭",
+                                  style: TextStyle(fontSize: 25)))),
+                      GestureDetector(
                         behavior: HitTestBehavior.translucent,
                         onTap: () async {
-                          print("${snapshot.data.displayName} (${snapshot.data.uid}) >>> [로그아웃]");
+                          print(
+                              "${snapshot.data.displayName} (${snapshot.data.uid}) >>> [로그아웃]");
                           handleSignOut();
                         },
                         child: Container(
@@ -97,6 +122,16 @@ class _HomeScreenState extends State<HomeScreen> {
             }),
       ),
     );
+  }
+
+  Future<Users> fetchUser() async {
+    final response = await http.post(Uri.http('10.0.2.2:8080', '/demo/chat/logIn'), body: {'uid':'test', 'name':'test'});
+
+    if(response.statusCode == 200) {
+      return Users.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load post');
+    }
   }
 
   Future<Null> handleSignOut() async {
